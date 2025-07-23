@@ -59,11 +59,11 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           # 拉取远程最新代码并rebase，确保本地与远程同步
-          git pull --rebase origin main
           # 检查是否有文件变更
           if [[ -n $(git status --porcelain) ]]; then
             git add -A
             git commit -m "Update directory trees"
+            git pull --rebase origin main
             # 推送时若有冲突，自动尝试rebase解决（需确保无手动冲突）
             git push --force-with-lease origin main
           else
