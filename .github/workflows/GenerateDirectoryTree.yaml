@@ -5,6 +5,8 @@ on:
     branches:
       - main  # 主分支
 
+permissions:
+  contents: write
 jobs:
   generate-tree:
     runs-on: ubuntu-latest
@@ -37,8 +39,10 @@ jobs:
               # 生成目录树并保存到index.html，排除已有的index.html和隐藏目录
               tree -H . -L 2 -o index.html --charset=UTF-8 --ignore-case -I "index.html|.git|.github|.vscode|generate_trees.sh" .
               
+              # 将 `<a href="./">.</a><br>` 替换为 `<a href="../">👆 回到上一级目录</a><br>`
+              sed -i 's|<a href="./">.</a><br>|<a href="../">👆 回到上一级目录</a>|g' index.html
               # 添加自定义样式
-              echo '<style>body { font-family: Arial, sans-serif; } .tree { margin: 20px; } .tree ul { list-style-type: none; margin-left: 20px; padding-left: 1em; position: relative; } .tree ul ul::before { content: ""; display: block; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background-color: #ccc; } .tree li { margin: 5px 0; padding-left: 1.5em; position: relative; } .tree li::before { content: ""; display: block; position: absolute; left: 0; top: 0.7em; width: 10px; height: 1px; background-color: #ccc; } .tree a { color: #0366d6; text-decoration: none; } .tree a:hover { text-decoration: underline; }</style>' >> index.html
+              echo '<style>body { font-family: Arial, sans-serif; } .tree { margin: 20px; } .tree ul { list-style-type: none; margin-left: 20px; padding-left: 1em; position: relative; } .tree ul ul::before { content: ""; display: block; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background-color: #ccc; } .tree li { margin: 5px 0; padding-left: 1.5em; position: relative; } .tree li::before { content: ""; display: block; position: absolute; left: 0; top: 0.7em; width: 10px; height: 1px; background-color: #ccc; } .tree a { color: #0366d6; text-decoration: none; } .tree a:hover { text-decoration: underline; } .back-link { font-weight: bold; color: #0366d6; }</style>' >> index.html
               
               # 返回上一级目录
               cd - > /dev/null
@@ -64,4 +68,3 @@ jobs:
           else
             echo "No changes to commit"
           fi
-    
